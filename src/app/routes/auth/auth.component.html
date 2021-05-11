@@ -1,0 +1,74 @@
+<page-header home="" title=""></page-header>
+<div nz-row>
+  <!-- 按钮 -->
+  <div nz-col nzXs="24">
+    <button nz-button [nzType]="'primary'" (click)="isVisible=true">添加角色</button>
+    <button nz-button [nzType]="'default'" (click)="getRoleList()" [nzLoading]="http.loading">刷新</button>
+  </div>
+  <div nz-col nzXs="24" class="mt-lg">
+    <st [data]="data" [columns]="columns" [page]="pages" [loading]="http.loading" resizable></st>
+  </div>
+</div>
+<!-- 添加角色 -->
+<nz-modal [nzWidth]="600" [(nzVisible)]="isVisible" nzTitle="添加角色" (nzOnCancel)="handleCancel()" [nzFooter]="null">
+  <ng-template nzModalContent>
+    <sf #sf class="pl-lg" [layout]="'inline'" [schema]="schema" [ui]="ui" button="none">
+      <div class="modal-footer" style="width: 100%;">
+        <button nz-button type="button" (click)="handleCancel()">取消</button>
+        <button nz-button type="submit" nzType="primary" [disabled]="!sf.valid" (click)="roleAdd(sf.value)"
+          [nzLoading]="http.loading">添加</button>
+      </div>
+    </sf>
+  </ng-template>
+</nz-modal>
+<!-- 编辑角色 -->
+<nz-modal [nzWidth]="600" [(nzVisible)]="isVisible1" [nzTitle]="'编辑角色: '+role" (nzOnCancel)="handleCancel(1)"
+  [nzFooter]="null">
+  <ng-template nzModalContent>
+    <sf #sf1 class="pl-lg" [layout]="'inline'" [schema]="schema1" [ui]="ui" button="none">
+      <div class="modal-footer" style="width: 100%;">
+        <button nz-button type="button" (click)="handleCancel(2)">取消</button>
+        <button nz-button type="submit" nzType="primary" [disabled]="!sf1.valid" (click)="roleMod(sf1.value)"
+          [nzLoading]="http.loading">保存</button>
+      </div>
+    </sf>
+  </ng-template>
+</nz-modal>
+
+<!-- 权限管理 -->
+<nz-modal [nzWidth]="1000" [(nzVisible)]="isVisible2" [nzTitle]="'权限管理: '+role" [nzCancelText]="null"
+  (nzOnCancel)="handleCancel(2)" (nzOnOk)="handleCancel(2)">
+  <ng-template nzModalContent>
+    <div class="mb-md">
+      <button nz-button [nzType]="'primary'" (click)="addPermissionBtn()">新增权限</button>
+    </div>
+    <st #st2 [data]="data2" [columns]="columns2" [page]="pages2">
+      <ng-template st-row="rolePermissionAvailable" let-item let-index="index">
+        <ng-container *ngIf="!item.edit">
+          <label nz-checkbox nzDisabled [(ngModel)]="item.rolePermissionAvailable"></label>
+        </ng-container>
+        <ng-container *ngIf="item.edit">
+          <label nz-checkbox [(ngModel)]="item.rolePermissionAvailable"></label>
+        </ng-container>
+      </ng-template>
+      <ng-template st-row="permissionAvailable" let-item let-index="index">
+        <label nz-checkbox nzDisabled [(ngModel)]="item.permissionAvailable"></label>
+      </ng-template>
+    </st>
+  </ng-template>
+
+</nz-modal>
+
+<!-- 新增权限 -->
+<nz-modal [nzWidth]="800" [(nzVisible)]="isVisible3" [nzTitle]="'新增权限: '+role" nzCancelText="关闭" [nzOkText]="null"
+  (nzOnCancel)="handleCancel(3)">
+  <ng-template nzModalContent>
+    <div class="mb-md">
+      <button nz-button [nzType]="'primary'" [disabled]="selectedPermission.length===0"
+        (click)="rolePermissionAdd()">添加</button>
+    </div>
+    <st #st3 [data]="data3" [columns]="columns3" [page]="pages3" [pi]="page3" [ps]="rows3" [total]="total3"
+      (change)="change($event)"></st>
+  </ng-template>
+
+</nz-modal>

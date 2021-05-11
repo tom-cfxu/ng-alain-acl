@@ -1,0 +1,67 @@
+<page-header home="" title=""></page-header>
+<div nz-row>
+  <!-- 按钮 -->
+  <div nz-col nzXs="24">
+    <button nz-button [nzType]="'primary'" (click)="isVisible=true">添加用户</button>
+    <button nz-button [nzType]="'default'" (click)="getUserList()" [nzLoading]="http.loading">刷新</button>
+  </div>
+  <div nz-col nzXs="24" class="mt-lg">
+    <st [data]="data" [columns]="columns" [pi]="page" [ps]="rows" [page]="pages" [total]="total"
+      (change)="change($event)" [loading]="http.loading" resizable virtualScroll [scroll]="{ x: '600px', y: '600px' }">
+    </st>
+  </div>
+</div>
+<!-- 添加用户 -->
+<nz-modal [nzWidth]="600" [(nzVisible)]="isVisible" nzTitle="添加用户" (nzOnCancel)="handleCancel()" [nzFooter]="null">
+  <ng-template nzModalContent>
+    <sf #sf class="pl-lg" [layout]="'inline'" [schema]="schema" [ui]="ui" button="none">
+      <div class="modal-footer" style="width: 100%;">
+        <button nz-button type="button" (click)="handleCancel()">取消</button>
+        <button nz-button type="submit" nzType="primary" [disabled]="!sf.valid" (click)="userAdd(sf.value)"
+          [nzLoading]="http.loading">添加</button>
+      </div>
+    </sf>
+  </ng-template>
+</nz-modal>
+<!-- 编辑用户 -->
+<nz-modal [nzWidth]="600" [(nzVisible)]="isVisible1" [nzTitle]="'编辑用户:'+username" (nzOnCancel)="handleCancel(1)"
+  [nzFooter]="null">
+  <ng-template nzModalContent>
+    <sf #sf1 class="pl-lg" [layout]="'inline'" [schema]="schema1" [ui]="ui" button="none">
+      <div class="modal-footer" style="width: 100%;">
+        <button nz-button type="button" (click)="handleCancel(1)">取消</button>
+        <button nz-button type="submit" nzType="primary" [disabled]="!sf1.valid" (click)="userMod(sf1.value)"
+          [nzLoading]="http.loading">保存</button>
+      </div>
+    </sf>
+  </ng-template>
+</nz-modal>
+<!-- 角色管理 -->
+<nz-modal [nzWidth]="600" [(nzVisible)]="isVisible2" [nzTitle]="'角色管理: '+username" [nzCancelText]="null"
+  (nzOnCancel)="handleCancel(2)" (nzOnOk)="handleCancel(2)">
+  <ng-template nzModalContent>
+    <div class="mb-md">
+      添加角色:<span>&nbsp;&nbsp;&nbsp;</span>
+      <nz-select class="mr-md" style="min-width: 120px;" nzMode="multiple" nzPlaceHolder="请选择角色"
+        [(ngModel)]="selectedRoles">
+        <nz-option *ngFor="let item of roles" [nzHide]="isOptionHide(item.roleId)" [nzLabel]="item.role"
+          [nzValue]="item.roleId"></nz-option>
+      </nz-select>
+      <button nz-button [nzType]="'primary'" [disabled]="selectedRoles.length===0" (click)="userRolesAdd()">分配</button>
+    </div>
+    <st #st2 [data]="data2" [columns]="columns2">
+      <ng-template st-row="userRoleAvailable" let-item let-index="index">
+        <ng-container *ngIf="!item.edit">
+          <label nz-checkbox nzDisabled [(ngModel)]="item.userRoleAvailable"></label>
+        </ng-container>
+        <ng-container *ngIf="item.edit">
+          <label nz-checkbox [(ngModel)]="item.userRoleAvailable"></label>
+        </ng-container>
+      </ng-template>
+      <ng-template st-row="roleAvailable" let-item let-index="index">
+        <label nz-checkbox nzDisabled [(ngModel)]="item.roleAvailable"></label>
+      </ng-template>
+    </st>
+  </ng-template>
+
+</nz-modal>
